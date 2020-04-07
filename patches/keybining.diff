@@ -1,7 +1,7 @@
-diff --git a/config.def.h b/../dwm_old/config.def.h
+diff --git a/config.def.h b/config.def.h
 index 14296af..960bc5d 100644
 --- a/config.def.h
-+++ b/../dwm_old/config.def.h
++++ b/config.def.h
 @@ -1,10 +1,10 @@
  /* See LICENSE file for copyright and license details. */
  
@@ -15,7 +15,6 @@ index 14296af..960bc5d 100644
  static const unsigned int systrayspacing = 2;   /* systray spacing */
  static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
  static const int showsystray        = 1;     /* 0 means no systray */
- /* tagging */
 @@ -34,31 +40,41 @@ static const Rule rules[] = {
  	 *	WM_CLASS(STRING) = instance, class
  	 *	WM_NAME(STRING) = title
@@ -34,7 +33,7 @@ index 14296af..960bc5d 100644
 +	{ "Nitrogen", NULL, 	  NULL,       0,            1,             1,           -1 },
 +	{ "Arandr", NULL,       NULL,         0,            1,             1,           -1 },
 +	{ NULL,	      NULL,     "amixer",     0,            1,             1,           -1 },
-+	  
++
  };
  
  /* layout(s) */
@@ -58,7 +57,7 @@ index 14296af..960bc5d 100644
 +//	{ "><>",      NULL },    /* no layout function means floating behavior */
 +//	{ "[M]",      monocle },
 +// 	{ "[@]",      spiral },
-+ 	{ "[\\]",     dwindle },
++	{ "[\\]",     dwindle },
 +	{ "><>",      NULL },
 +	{ NULL,       NULL }
  };
