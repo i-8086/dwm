@@ -1,0 +1,125 @@
+URL: http://dwm.suckless.org/patches/historical/float_border_color
+float_border_color2 allows you to specify a different border color for floating
+windows.
+
+Index: dwm/config.def.h
+===================================================================
+--- dwm/config.def.h.orig
++++ dwm/config.def.h
+@@ -12,6 +12,8 @@
+ static char selbgcolor[]            = "#005577";
++static char selflcolor[]	     = "#eeeeee";
++static char normflcolor[]	     = "#444444";
+-static char *colors[][3] = {
+-       /*               fg           bg           border   */
+-       [SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
+-       [SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
++static char *colors[][4]      = {
++       /*               fg         bg         border     float */
++	[SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor, normflcolor },
++	[SchemeSel] =  { selfgcolor,  selbgcolor,  selbordercolor, selflcolor },
+ };
+Index: dwm/dwm.c
+===================================================================
+--- dwm/dwm.c.orig
++++ dwm/dwm.c
+@@ -809,7 +810,10 @@ focus(Client *c)
+ 		detachstack(c);
+ 		attachstack(c);
+ 		grabbuttons(c, 1);
+-		XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColBorder].pixel);
++		if(c->isfloating)
++			XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColFloat].pixel);
++		else
++			XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColBorder].pixel);
+ 		setfocus(c);
+ 	} else {
+ 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
+@@ -1014,30 +1032,32 @@ killclient(const Arg *arg)
+ void
+ loadxrdb()
+ {
+   Display *display;
+   char * resm;
+   XrmDatabase xrdb;
+   char *type;
+   XrmValue value;
+ 
+   display = XOpenDisplay(NULL);
+ 
+   if (display != NULL) {
+     resm = XResourceManagerString(display);
+ 
+     if (resm != NULL) {
+       xrdb = XrmGetStringDatabase(resm);
+ 
+       if (xrdb != NULL) {
+         XRDB_LOAD_COLOR("dwm.normbordercolor", normbordercolor);
+         XRDB_LOAD_COLOR("dwm.normbgcolor", normbgcolor);
+         XRDB_LOAD_COLOR("dwm.normfgcolor", normfgcolor);
+         XRDB_LOAD_COLOR("dwm.selbordercolor", selbordercolor);
+         XRDB_LOAD_COLOR("dwm.selbgcolor", selbgcolor);
+         XRDB_LOAD_COLOR("dwm.selfgcolor", selfgcolor);
++	 XRDB_LOAD_COLOR("dwm.normflcolor", normflcolor);
++	 XRDB_LOAD_COLOR("dwm.selflcolor", selflcolor);
+       }
+     }
+   }
+ 
+   XCloseDisplay(display);
+ }
+@@ -1068,7 +1072,10 @@ manage(Window w, XWindowAttributes *wa)
+ 
+ 	wc.border_width = c->bw;
+ 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
+-	XSetWindowBorder(dpy, w, scheme[SchemeNorm][ColBorder].pixel);
++	if(c->isfloating)
++		XSetWindowBorder(dpy, w, scheme[SchemeNorm][ColFloat].pixel);
++	else
++		XSetWindowBorder(dpy, w, scheme[SchemeNorm][ColBorder].pixel);
+ 	configure(c); /* propagates border_width, if size doesn't change */
+ 	updatewindowtype(c);
+ 	updatesizehints(c);
+@@ -1079,6 +1086,8 @@ manage(Window w, XWindowAttributes *wa)
+ 		c->isfloating = c->oldstate = trans != None || c->isfixed;
+ 	if (c->isfloating)
+ 		XRaiseWindow(dpy, c->win);
++	if(c->isfloating)
++		XSetWindowBorder(dpy, w, scheme[SchemeNorm][ColFloat].pixel);
+ 	if( attachbelow )
+ 		attachBelow(c);
+ 	else
+@@ -1583,9 +1592,9 @@ setup(void)
+ 	cursor[CurResize] = drw_cur_create(drw, XC_sizing);
+ 	cursor[CurMove] = drw_cur_create(drw, XC_fleur);
+ 	/* init appearance */
+ 	scheme = ecalloc(LENGTH(colors), sizeof(Clr *));
+ 	for (i = 0; i < LENGTH(colors); i++)
+-		scheme[i] = drw_scm_create(drw, colors[i], 3);
++		scheme[i] = drw_scm_create(drw, colors[i], 4);
+ 	/* init system tray */
+ 	updatesystray();
+ 	/* init bars */
+@@ -1706,6 +1715,10 @@ togglefloating(const Arg *arg)
+ 		return;
+ 	selmon->sel->isfloating = !selmon->sel->isfloating || selmon->sel->isfixed;
+ 	if (selmon->sel->isfloating)
++		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColFloat].pixel);
++	else
++		XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColBorder].pixel);
++	if(selmon->sel->isfloating)
+ 		resize(selmon->sel, selmon->sel->x, selmon->sel->y,
+ 			selmon->sel->w, selmon->sel->h, 0);
+ 	arrange(selmon);
+Index: dwm/drw.h
+===================================================================       	
+--- dwm/drw.h.orig
++++ dwm/drw.h
+@@ -13,6 +13,6 @@
+ } Fnt;
+ 
+-enum { ColFg, ColBg, ColBorder }; /* Clr scheme index */
++enum { ColFg, ColBg, ColBorder, ColFloat }; /* Clr scheme index */
+ typedef XftColor Clr;
+ 
+ typedef struct {
