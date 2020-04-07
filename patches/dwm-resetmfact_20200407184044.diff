@@ -1,0 +1,42 @@
+diff --git a/config.def.h b/config.def.h
+index d61ae1d..1fcb1c4 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -115,6 +115,7 @@ static Key keys[] = {
+ 	{ MODKEY|ShiftMask,             XK_equal,  setgaps,        {.i = 0  } },
+ 	{ MODKEY,			XK_bracketleft, setmfact,  {.f = -0.05} },
+ 	{ MODKEY,                       XK_bracketright, setmfact,  {.f = +0.05} },
++	{ MODKEY|ShiftMask,             XK_bracketleft, resetmfact, {.f = 0.50} },
+ 	TAGKEYS(                        XK_1,                      0)
+ 	TAGKEYS(                        XK_2,                      1)
+ 	TAGKEYS(                        XK_3,                      2)
+diff --git a/dwm.c b/dwm.c
+index 46cf527..1f4f025 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -258,6 +258,7 @@ static void setfullscreen(Client *c, int fullscreen);
+ static void setgaps(const Arg *arg);
+ static void setlayout(const Arg *arg);
+ static void setmfact(const Arg *arg);
++static void resetmfact(const Arg *arg);
+ static void setup(void);
+ static void seturgent(Client *c, int urg);
+ static void showhide(Client *c);
+@@ -1941,6 +1942,17 @@ setmfact(const Arg *arg)
+ 	arrange(selmon);
+ }
+ 
++void
++resetmfact(const Arg *arg)
++{
++	float f;
++	if (!arg || !selmon->lt[selmon->sellt]->arrange)
++                return;
++	f = arg->f;
++	selmon->mfact = selmon->pertag->mfacts[selmon->pertag->curtag] = f;
++        arrange(selmon);
++}
++
+ void
+ setup(void)
+ {

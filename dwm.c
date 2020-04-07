@@ -258,6 +258,7 @@ static void setfullscreen(Client *c, int fullscreen);
 static void setgaps(const Arg *arg);
 static void setlayout(const Arg *arg);
 static void setmfact(const Arg *arg);
+static void resetmfact(const Arg *arg);
 static void setup(void);
 static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
@@ -1939,6 +1940,17 @@ setmfact(const Arg *arg)
 		return;
 	selmon->mfact = selmon->pertag->mfacts[selmon->pertag->curtag] = f;
 	arrange(selmon);
+}
+
+void
+resetmfact(const Arg *arg)
+{
+	float f;
+	if (!arg || !selmon->lt[selmon->sellt]->arrange)
+                return;
+	f = arg->f;
+	selmon->mfact = selmon->pertag->mfacts[selmon->pertag->curtag] = f;
+        arrange(selmon);
 }
 
 void
