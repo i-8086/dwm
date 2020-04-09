@@ -10,7 +10,7 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;     /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "monospace:size=10" };
+static const char *fonts[]          = { "monospace:size=10", "Symbola:size=14" };
 static const char dmenufont[]       = "monospace:size=10";
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
@@ -131,8 +131,8 @@ static Key keys[] = {
 	{ MODKEY,                       XK_F2,     spawn,          SHCMD("firefox") },
 	{ MODKEY,                       XK_F3,     spawn,          SHCMD("pcmanfm") },
 	{ MODKEY,                       XK_F4,     spawn,          SHCMD("st -e ranger") },
-	{ MODKEY,			XK_Page_Up, spawn,	   SHCMD("amixer sset Master 2%+; pkill -RTMIN+11 dwmblocks &") },
-	{ MODKEY,                       XK_Page_Down, spawn,       SHCMD("amixer sset Master 2%-; pkill -RTMIN+11 dwmblocks &") },
+	{ MODKEY,			XK_Page_Up, spawn,	   SHCMD("amixer sset Master 2%+; refbar; pkill -RTMIN+11 dwmblocks &") },
+	{ MODKEY,                       XK_Page_Down, spawn,       SHCMD("amixer sset Master 2%-; refbar; pkill -RTMIN+11 dwmblocks &") },
 	{ MODKEY, 			XK_Up,	   focusstack, 	   {.i = -1 } },
 	{ MODKEY,			XK_Down,   focusstack,     {.i = +1 } },
 	{ MODKEY, 			XK_Left,   focusmon,	   {.i = -1 } },

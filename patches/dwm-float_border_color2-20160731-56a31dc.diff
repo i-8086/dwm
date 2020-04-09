@@ -111,6 +111,15 @@ Index: dwm/dwm.c
  		resize(selmon->sel, selmon->sel->x, selmon->sel->y,
  			selmon->sel->w, selmon->sel->h, 0);
  	arrange(selmon);
+@@ -2795,7 +2795,7 @@ xrdb(const Arg *arg)
+ loadxrdb();
+ int i;
+ for (i = 0; i < LENGTH(colors); i++)
+-	scheme[i] = drw_scm_create(drw, colors[i], 3);
++	scheme[i] = drw_scm_create(drw, colors[i], 4);
+ 	focus(NULL);
+ 	arrange(NULL);
+ }
 Index: dwm/drw.h
 ===================================================================       	
 --- dwm/drw.h.orig
