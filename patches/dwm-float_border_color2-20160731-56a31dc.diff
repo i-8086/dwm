@@ -111,7 +111,19 @@ Index: dwm/dwm.c
  		resize(selmon->sel, selmon->sel->x, selmon->sel->y,
  			selmon->sel->w, selmon->sel->h, 0);
  	arrange(selmon);
-@@ -2795,7 +2795,7 @@ xrdb(const Arg *arg)
+@@ -2234,7 +2234,10 @@ unfocus(Client *c, int setfocus)
+ 	if (!c)
+ 		return;
+ 	grabbuttons(c, 0);
+-	XSetWindowBorder(dpy, c->win, scheme[SchemeNorm][ColBorder].pixel);
++	if(c->isfloating)
++		XSetWindowBorder(dpy, c->win, scheme[SchemeNorm][ColFloat].pixel);
++	else
++		XSetWindowBorder(dpy, c->win, scheme[SchemeNorm][ColBorder].pixel);
+ 	if (setfocus) {
+ 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
+ 		XDeleteProperty(dpy, root, netatom[NetActiveWindow]);
+@@ -2788,7 +2788,7 @@ xrdb(const Arg *arg)
  loadxrdb();
  int i;
  for (i = 0; i < LENGTH(colors); i++)
