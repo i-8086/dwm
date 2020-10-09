@@ -10,7 +10,7 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;     /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "monospace:size=10", "Symbola:size=14" };
+static const char *fonts[]          = { "monospace:size=10", "Symbola:size=10" };
 static const char dmenufont[]       = "monospace:size=10";
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
@@ -52,7 +52,7 @@ static const Rule rules[] = {
 static const float mfact     = 0.50; /* factor of master area size [0.05..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
-static int attachbelow = 0;    /* 1 means attach after the currently active window */
+static int attachbelow = 1;    /* 1 means attach after the currently active window */
 static int warpcursor = 0;	/*1 means warp cursor to center of active window */
 
 #include "fibonacci.c"
@@ -82,6 +82,8 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", selfgcolor, NULL };
 static const char *termcmd[]  = { "st", NULL };
+
+#include <X11/XF86keysym.h>
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -126,7 +128,7 @@ static Key keys[] = {
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_Escape, quit,           {0} },
-	{ MODKEY,			XK_Escape, spawn,          SHCMD("telegram") },
+	{ MODKEY,			XK_Escape, spawn,          SHCMD("telegram-desktop") },
 	{ MODKEY,		        XK_F1,     spawn,          SHCMD("google-chrome-stable") },
 	{ MODKEY,                       XK_F2,     spawn,          SHCMD("firefox") },
 	{ MODKEY,                       XK_F3,     spawn,          SHCMD("pcmanfm") },
@@ -142,12 +144,17 @@ static Key keys[] = {
         { MODKEY|ShiftMask,             XK_Left,   tagmon,         {.i = -1 } },
         { MODKEY|ShiftMask,             XK_Right,  tagmon,         {.i = +1 } },
 	{ MODKEY,                       XK_F11,    spawn,          SHCMD("displayoff") },
-	{ MODKEY,			XK_F12,    spawn,	   SHCMD("slock; displayoff") },
+	{ MODKEY,			XK_F12,    spawn,	   SHCMD("slock & displayoff") },
 	{ MODKEY, 			XK_F8,	   spawn,	   SHCMD("displayselect") },
-	{ MODKEY,			XK_Print,  spawn,	   SHCMD("scrot '%Y%m%d-%H%M%S_screenshot.png' -e 'mv $f ~/Pictures/screenshots/'; notify-send screenshot") },
+//	{ MODKEY,			XK_Print,  spawn,	   SHCMD("scrot '%Y%m%d-%H%M%S_screenshot.png' -e 'mv $f ~/Pictures/screenshots/'; notify-send screenshot") },
+	{ MODKEY|ShiftMask, XK_Print,  spawn,      SHCMD("scrot -s") },
 	{ MODKEY|ControlMask,		XK_m,	   spawn,	   SHCMD("st -e alsamixer") },
 	{ MODKEY,          	        XK_F5,     spawn,          SHCMD("st -e khal interactive") },
-
+	{ 0, XF86XK_MonBrightnessUp,	spawn,			   SHCMD("xbacklight -inc 5; pkill -RTMIN+12 dwmblocks &") },
+	{ 0, XF86XK_MonBrightnessDown,	spawn,			   SHCMD("xbacklight -dec 5; pkill -RTMIN+12 dwmblocks &") },
+	{ 0, XF86XK_AudioRaiseVolume,	spawn,			   SHCMD("amixer sset Master 2%+; refbar; pkill -RTMIN+11 dwmblocks &") },
+	{ 0, XF86XK_AudioLowerVolume,	spawn,			   SHCMD("amixer sset Master 2%-; refbar; pkill -RTMIN+11 dwmblocks &") },
+	{ MODKEY,			XK_Print,   spawn,			   SHCMD("maimpick") },
 };
 
 /* button definitions */
